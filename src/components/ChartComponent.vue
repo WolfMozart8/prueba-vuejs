@@ -24,6 +24,7 @@ export default defineComponent({
 
 <style scoped>
 .chart-component {
+  height: 100%;
   padding: 15px;
   border: 1px solid #34495e;
   border-radius: 4px;

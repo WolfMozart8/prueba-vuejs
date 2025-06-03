@@ -24,8 +24,8 @@
         <div><span>1 AÑO</span><span :class="getPerformanceClass(details.price?.pctRelW52)">{{ formatPercentage(details.price?.pctRelW52) }}</span></div>
         <div><span>AÑO A LA FECHA</span><span :class="getPerformanceClass(details.price?.pctRelCY)">{{ formatPercentage(details.price?.pctRelCY) }}</span></div>
       </div>
-      <p class="footnote">** Último precio, Monto Transado y Variación diaria con desfase de 15 minutos. Haz click en cada instrumento para ver información actualizada en el gráfico.</p>
-      <p class="footnote">** Variaciones a 30d, Año Actual y 12 meses calculadas con el precio de cierre al último día habil.</p>
+      <!-- <p class="footnote">** Último precio, Monto Transado y Variación diaria con desfase de 15 minutos. Haz click en cada instrumento para ver información actualizada en el gráfico.</p>
+      <p class="footnote">** Variaciones a 30d, Año Actual y 12 meses calculadas con el precio de cierre al último día habil.</p> -->
     </div>
 
   </div>
