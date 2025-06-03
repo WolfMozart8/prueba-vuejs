@@ -94,6 +94,7 @@ const instrumentsSecondHalf = computed<Instrument[]>(() => {
 }
 
 table {
+  /* font-size: 0.7rem; */
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 15px;

@@ -1,6 +1,6 @@
 <template>
   <tr class="instrument-item-component" @click="selectInstrument" :class="{ selected: isSelected }">
-    <td>{{ instrument.shortName }}</td>
+    <td class="align-left">{{ instrument.shortName }}</td>
     <td>{{ formatNumber(instrument.lastPrice) }}</td>
     <td>{{ formatVolume(instrument.volumeMoney) }}</td>
     <td :class="getPerformanceClass(instrument.pctDay)">{{ formatPercentage(instrument.pctDay) }}</td>
@@ -58,6 +58,14 @@ const getPerformanceClass = (value: number | undefined) => {
 .instrument-item-component {
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.instrument-item-component .align-left {
+  text-align: left;
+}
+
+.instrument-item-component td {
+  text-align: right;
 }
 
 .instrument-item-component:hover {
