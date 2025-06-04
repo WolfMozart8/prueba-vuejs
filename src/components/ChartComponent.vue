@@ -14,7 +14,11 @@
       </div>
     </div>
     <div class="chart-container" v-if="chartDataReady">
-      <Line :data="chartData" :options="chartOptions" />
+      <Line 
+        :key="'chart-' + activeRange"
+        :data="chartData" 
+        :options="chartOptions" 
+      />
     </div>
     <div v-else class="loading-placeholder">
       <p v-if="store.selectedInstrumentId">Cargando datos del gráfico...</p>
@@ -24,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useStockStore } from '@/stores/stockStore';
 import type { HistoryPoint } from '@/stores/stockStore';
 import { Line } from 'vue-chartjs';
@@ -55,13 +59,68 @@ ChartJS.register(
 );
 
 const store = useStockStore();
-const activeRange = ref('MAX'); // Default to 'MAX'
+type TimeRange = '1D' | '1S' | '1M' | '3M' | '6M' | '1A' | '5A';
+const activeRange = ref<TimeRange>('1A');
 
 const chartDataReady = computed(() => store.selectedInstrumentHistory && store.selectedInstrumentHistory.length > 0);
 
 const processedHistory = computed(() => {
-  // For now, we'll use the full history. Filtering by activeRange will be added later.
-  return store.selectedInstrumentHistory.slice().sort((a, b) => a.datetimeLastPriceTs - b.datetimeLastPriceTs);
+  if (!store.selectedInstrumentHistory || store.selectedInstrumentHistory.length === 0) {
+    return [];
+  }
+  
+  // Create a copy of the history and sort it by timestamp
+  const sortedHistory = [...store.selectedInstrumentHistory].sort(
+    (a, b) => a.datetimeLastPriceTs - b.datetimeLastPriceTs
+  );
+  
+  const totalPoints = sortedHistory.length;
+  if (totalPoints === 0) return [];
+  
+  const latestTimestamp = sortedHistory[sortedHistory.length - 1].datetimeLastPriceTs;
+  
+  // Handle 1D view specially - show last 24 hours of data
+  if (activeRange.value === '1D') {
+    const oneDayAgo = latestTimestamp - 86400; // 24 hours in seconds
+    const lastDayData = sortedHistory.filter(point => point.datetimeLastPriceTs >= oneDayAgo);
+    
+    // If we have at least 2 points in the last 24 hours, return them
+    // Otherwise, return the last 2 points to ensure we have a line
+    return lastDayData.length >= 2 ? lastDayData : sortedHistory.slice(-2);
+  }
+  
+  // For other ranges, use the point-based approach
+  const pointsToShow = {
+    '1S': 5,       // Last 5 points for 1 week
+    '1M': 20,      // Last 20 points for 1 month
+    '3M': 60,      // Last 60 points for 3 months
+    '6M': 120,     // Last 120 points for 6 months
+    '1A': 250,     // Last 250 points for 1 year
+    '5A': Infinity // All points for 5 years
+  };
+  
+  // Get the number of points to show for the active range
+  const pointCount = pointsToShow[activeRange.value] || totalPoints;
+  
+  // Return the last N points
+  return sortedHistory.slice(-pointCount);
+  
+  // Debug: Log the current range and points being shown
+  const result = sortedHistory.slice(-pointCount);
+  console.log('Time Range:', activeRange.value);
+  console.log('Showing', result.length, 'of', totalPoints, 'points');
+  if (result.length > 0) {
+    console.log('First point shown:', {
+      date: new Date(result[0].datetimeLastPriceTs * 1000).toISOString(),
+      price: result[0].lastPrice
+    });
+    console.log('Last point shown:', {
+      date: new Date(result[result.length - 1].datetimeLastPriceTs * 1000).toISOString(),
+      price: result[result.length - 1].lastPrice
+    });
+  }
+  
+  return result;
 });
 
 const chartData = computed(() => {
@@ -165,17 +224,25 @@ const chartOptions = ref({
   }
 });
 
-// Placeholder for time range logic
-const setTimeRange = (range: string) => {
+const setTimeRange = async (range: TimeRange) => {
+  if (activeRange.value === range) return; // Skip if already selected
+  
   activeRange.value = range;
-  // console.log(`Time range set to: ${range}`);
-  // Here you would typically filter 'processedHistory' or re-fetch data based on the range.
-  // For now, it just sets the active button style.
+  
+  // Force a small delay to ensure the chart updates properly
+  await nextTick();
+  
+  // Force a re-fetch of the history data with the new range
+  if (store.selectedInstrumentId) {
+    // Clear the cache for this instrument to force a re-fetch
+    delete store.historyCache[store.selectedInstrumentId];
+    await store.fetchHistory(store.selectedInstrumentId);
+  }
 };
 
 watch(() => store.selectedInstrumentId, (newId) => {
   if (newId) {
-    activeRange.value = 'MAX'; // Reset to MAX when instrument changes
+    activeRange.value = '1A'; // Reset to MAX when instrument changes
   }
 });
 
