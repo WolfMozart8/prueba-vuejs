@@ -110,12 +110,12 @@ export const useStockStore = defineStore('stock', {
   getters: {
     filteredInstruments: (state) => {
       if (!state.searchTerm) {
-        // This logic will need to be refined based on how constituents are structured
-        // For now, let's assume 'instruments' holds the list for the active tab
         return state.instruments;
       }
-      return state.instruments.filter(instrument =>
-        instrument.name.toLowerCase().includes(state.searchTerm.toLowerCase())
+      const searchTerm = state.searchTerm.toLowerCase();
+      return state.instruments.filter(instrument => 
+        instrument.name.toLowerCase().includes(searchTerm) || 
+        (instrument.shortName && instrument.shortName.toLowerCase().includes(searchTerm))
       );
     },
     currentInstrumentDetails: (state) => state.selectedInstrumentDetails,
