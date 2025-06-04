@@ -80,10 +80,18 @@ export interface InstrumentDetail {
 }
 
 export interface HistoryPoint {
-  // Define this based on the structure of your history files (e.g., history-IPSA.json)
-  date: string; // Assuming date and value are present
-  value: number;
-  // ... other properties
+  datetimeLastPrice: string;
+  datetimeLastPriceTs: number;
+  lastPrice: number;
+  highPrice?: number;
+  lowPrice?: number;
+  openPrice?: number;
+  closePrice?: number;
+  volume?: number;
+  volumeMoney?: number;
+  performanceRelative?: number;
+  performanceAbsolute?: number;
+  tend?: string;
 }
 
 export const useStockStore = defineStore('stock', {
@@ -95,7 +103,7 @@ export const useStockStore = defineStore('stock', {
     selectedInstrumentHistory: [] as HistoryPoint[],
     rawConstituents: [] as ConstituentInstrument[], // Holds raw data from constituensList.json's data.constituents array
     allSummaries: {} as Record<string, InstrumentDetail>, // Cache for summaries
-    allHistories: {} as Record<string, HistoryPoint[]>, // Cache for histories
+    historyCache: {} as Record<string, HistoryPoint[]>, // Cache for histories
     activeTab: 'IPSA', // Default active tab, matches info.name in constituensList.json
     currentMarketInfo: null as any, // To store data.info from constituensList.json
   }),
@@ -156,26 +164,52 @@ export const useStockStore = defineStore('stock', {
     },
 
     async fetchHistory(instrumentId: string) {
-      if (this.allHistories[instrumentId]) {
-        this.selectedInstrumentHistory = this.allHistories[instrumentId];
+      if (this.selectedInstrumentHistory.length > 0 && this.selectedInstrumentId === instrumentId && this.historyCache[instrumentId]) {
+        // console.log('Using cached history for:', instrumentId);
+        this.selectedInstrumentHistory = this.historyCache[instrumentId];
         return;
       }
       try {
-        // Construct the path to the specific history file
-        const data = await import(`@/assets/data/json-VueJS/history/history-${instrumentId}.json`);
-        const historyData = data.default || data;
-        this.allHistories[instrumentId] = historyData;
-        this.selectedInstrumentHistory = historyData;
+        // console.log(`Fetching history for ${instrumentId}...`);
+        const module = await import(`@/assets/data/json-VueJS/history/history-${instrumentId.toUpperCase()}.json`);
+        const jsonData = module.default || module;
+        if (jsonData && jsonData.success && jsonData.data && jsonData.data.chart) {
+          this.selectedInstrumentHistory = jsonData.data.chart.map((point: any) => ({
+            datetimeLastPrice: point.datetimeLastPrice,
+            datetimeLastPriceTs: point.datetimeLastPriceTs,
+            lastPrice: point.lastPrice,
+            highPrice: point.highPrice,
+            lowPrice: point.lowPrice,
+            openPrice: point.openPrice,
+            closePrice: point.closePrice,
+            volume: point.volume,
+            volumeMoney: point.volumeMoney,
+            performanceRelative: point.performanceRelative,
+            performanceAbsolute: point.performanceAbsolute,
+            tend: point.tend
+          }));
+          this.historyCache[instrumentId] = this.selectedInstrumentHistory;
+          // console.log(`History fetched for ${instrumentId}:`, this.selectedInstrumentHistory.length, "points");
+        } else {
+          this.selectedInstrumentHistory = [];
+          // console.warn(`No history data found or incorrect structure for ${instrumentId}`);
+        }
       } catch (error) {
-        console.error(`Error fetching history for ${instrumentId}:`, error);
+        // console.error(`Failed to fetch history for ${instrumentId}:`, error);
         this.selectedInstrumentHistory = [];
       }
     },
 
-    selectInstrument(instrumentId: string) {
-      this.selectedInstrumentId = instrumentId;
-      this.fetchSummary(instrumentId);
-      this.fetchHistory(instrumentId);
+    selectInstrument(instrumentId: string | null) {
+      if (instrumentId && this.selectedInstrumentId !== instrumentId) {
+        this.selectedInstrumentId = instrumentId;
+        this.fetchSummary(instrumentId);
+        this.fetchHistory(instrumentId); // Ensure history is fetched
+      } else if (instrumentId === null) {
+        this.selectedInstrumentId = null;
+        this.selectedInstrumentDetails = null;
+        this.selectedInstrumentHistory = [];
+      }
     },
 
     setSearchTerm(term: string) {
