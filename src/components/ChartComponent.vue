@@ -105,22 +105,6 @@ const processedHistory = computed(() => {
   // Return the last N points
   return sortedHistory.slice(-pointCount);
   
-  // Debug: Log the current range and points being shown
-  const result = sortedHistory.slice(-pointCount);
-  console.log('Time Range:', activeRange.value);
-  console.log('Showing', result.length, 'of', totalPoints, 'points');
-  if (result.length > 0) {
-    console.log('First point shown:', {
-      date: new Date(result[0].datetimeLastPriceTs * 1000).toISOString(),
-      price: result[0].lastPrice
-    });
-    console.log('Last point shown:', {
-      date: new Date(result[result.length - 1].datetimeLastPriceTs * 1000).toISOString(),
-      price: result[result.length - 1].lastPrice
-    });
-  }
-  
-  return result;
 });
 
 const chartData = computed(() => {

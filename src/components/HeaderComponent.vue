@@ -4,11 +4,11 @@
     <p>{{ marketInfo.shortName }}</p> <!-- Or some other descriptor like 'Indice' if appropriate -->
     <div v-if="details.price">
       <span>Valor Actual: <strong>{{ formatNumber(details.price.lastPrice) }}</strong></span>
-      <span :class="getPerformanceClass(details.price.performanceRelative)">
-        Var.% Actual: {{ formatPercentage(details.price.performanceRelative) }}
+      <span>
+        Var.% Actual: <span :class="getPerformanceClass(details.price.performanceRelative)"> {{ formatPercentage(details.price.performanceRelative) }} </span>
       </span>
-      <span :class="getPerformanceClass(details.price.performanceAbsolute)">
-        Var. Puntos Actual: {{ formatNumber(details.price.performanceAbsolute, 2) }}
+      <span>
+        Var. Puntos Actual: <span :class="getPerformanceClass(details.price.performanceAbsolute)"> {{ formatNumber(details.price.performanceAbsolute, 2) }} </span>
       </span>
     </div>
   </div>

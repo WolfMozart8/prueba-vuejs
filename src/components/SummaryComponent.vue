@@ -18,7 +18,10 @@
         <div><span>MÍNIMO 52 SEMANAS</span><span>{{ formatNumber(details.price?.min52W) }}</span></div>
       </div>
 
-      <h4>Variación** %</h4>
+      <div class="variation-header">
+        <h4>Variación**</h4>
+        <span>%</span>
+      </div>
       <div class="summary-grid variation-grid">
         <div><span>1 MES</span><span :class="getPerformanceClass(details.price?.pct30D)">{{ formatPercentage(details.price?.pct30D) }}</span></div>
         <div><span>1 AÑO</span><span :class="getPerformanceClass(details.price?.pctRelW52)">{{ formatPercentage(details.price?.pctRelW52) }}</span></div>
@@ -146,6 +149,29 @@ const getPerformanceClass = (value: number | undefined) => {
 
 .positive {
   color: #2ecc71 !important;
+}
+
+.variation-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #34495e;
+  padding-bottom: 5px;
+}
+
+.variation-header h4 {
+  margin: 0;
+  color: #ecf0f1;
+  border: none;
+  padding: 0;
+}
+
+.variation-header span {
+  text-align: right;
+  font-weight: bold;
+  color: #ecf0f1;
 }
 
 .footnote {
