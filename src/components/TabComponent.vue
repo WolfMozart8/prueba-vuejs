@@ -1,18 +1,49 @@
 <template>
   <div class="tab-component">
-    <button class="active">IPSA</button>
-    <button>IGPA</button>
-    <button>NASDAQ</button>
-    <button>DOW JONES</button>
-    <button>SP/BVL</button>
+    <button 
+      v-for="tab in tabs" 
+      :key="tab.id"
+      :class="{ active: activeTab === tab.id }"
+      @click="setActiveTab(tab.id)"
+    >
+      {{ tab.label }}
+    </button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
+import { useStockStore } from '@/stores/stockStore';
 
 export default defineComponent({
   name: 'TabComponent',
+  setup() {
+    const store = useStockStore();
+    
+    const tabs = [
+      { id: 'IPSA', label: 'IPSA' },
+      { id: 'IGPA', label: 'IGPA' },
+      { id: 'NASDAQ', label: 'NASDAQ' },
+      { id: 'DOW JONES', label: 'DOW JONES' },
+      { id: 'SP/BVL', label: 'SP/BVL' },
+    ];
+
+    const activeTab = computed(() => store.activeTab);
+
+    const setActiveTab = (tabId: string) => {
+      if (tabId === 'IPSA') {
+        store.setActiveTab(tabId);
+      } else {
+        alert('No hay información para la opción seleccionada');
+      }
+    };
+
+    return {
+      tabs,
+      activeTab,
+      setActiveTab,
+    };
+  },
 });
 </script>
 
