@@ -10,20 +10,45 @@ describe('SummaryComponent', () => {
 
   const mockDetails = {
     info: {
+      name: 'Test Instrument',
+      shortName: 'TEST',
+      countryName: 'Chile',
+      currencyName: 'Chilean Peso',
+      currencySymbol: 'CLP',
+      codeInstrument: 'TEST',
       marketName: 'Santiago Stock Exchange',
+      hourOpen: '09:30:00',
+      hourClose: '16:00:00',
+      trading: true,
+      exchangeRate: 1
     },
     price: {
+      lastPrice: 125.5,
       datetimeLastPrice: '2024-06-04 15:30:00',
       openPrice: 125.5,
       closePrice: 124.75,
+      datetimeClosePrice: '2024-06-04 16:00:00',
+      performanceAbsolute: 3.05,
+      performanceRelative: 2.5,
+      bid: 125.4,
+      bidVolume: 1000,
+      bidDatetime: '2024-06-04 15:30:00',
+      ask: 125.6,
+      askVolume: 1500,
+      askDatetime: '2024-06-04 15:30:00',
+      volumeMoney: 1255000,
+      accumulatedVolumeMoney: 12550000,
+      volumeInstrument: 10000,
+      accumulatedVolumeInstrument: 100000,
+      tend: 'U',
       maxDay: 126.25,
       minDay: 124.0,
-      max52W: 135.5,
       min52W: 115.25,
+      max52W: 135.5,
       pct30D: 2.5,
       pctRelW52: 8.2,
-      pctRelCY: 5.3,
-    },
+      pctRelCY: 5.3
+    }
   };
 
   beforeEach(() => {
