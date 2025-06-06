@@ -1,45 +1,19 @@
-# prueba_vuejs
+# Prueba Vuejs 3
 
-This template should help get you started developing with Vue 3 in Vite.
+## Link:
 
-## Recommended IDE Setup
+https://wolfmozart8.github.io/prueba-vuejs/
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Desarrollado por: 
 
-## Type Support for `.vue` Imports in TS
+Felipe Ríos
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Fecha: 
 
-## Customize configuration
+2025-06-05
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Descripción: 
 
-## Project Setup
+Proyecto realizado para la prueba de Vuejs 3, utilizando Vue 3 como framework, Pinia como store y Vitest como testing.
 
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+Lamentablemente por temas de tiempo no se pudo implementar todos los requirimientos de la aplicación, principalmente los test.
